@@ -31,3 +31,21 @@ exports.deleteTodo = catchAsyncErrors(async (req, res, next) => {
   await TodoModel.findByIdAndDelete(id);
   res.status(200).json({ msg: "Todo has been deleted." });
 });
+
+exports.updateTodo = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  // Find and update the todo with new data
+  const updatedTodo = await TodoModel.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  // Check if the todo was found and updated
+  if (!updatedTodo) {
+    return res.status(404).json({ msg: "Todo not found." });
+  }
+
+  res.status(200).json({ msg: "Todo has been updated.", data: updatedTodo });
+});
